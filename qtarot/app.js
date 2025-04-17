@@ -1,33 +1,30 @@
+// ─── Data ───────────────────────────────────────────────────────────────────
+
 const tarotCards = [
-  // Major Arcana (22)
-  "The Fool", "The Magician", "The High Priestess", "The Empress", "The Emperor",
-  "The Hierophant", "The Lovers", "The Chariot", "Strength", "The Hermit",
-  "Wheel of Fortune", "Justice", "The Hanged Man", "Death", "Temperance",
-  "The Devil", "The Tower", "The Star", "The Moon", "The Sun",
-  "Judgement", "The World",
-
-  // Minor Arcana: Wands (14)
-  "Ace of Wands", "Two of Wands", "Three of Wands", "Four of Wands", "Five of Wands",
-  "Six of Wands", "Seven of Wands", "Eight of Wands", "Nine of Wands", "Ten of Wands",
-  "Page of Wands", "Knight of Wands", "Queen of Wands", "King of Wands",
-
-  // Minor Arcana: Cups (14)
-  "Ace of Cups", "Two of Cups", "Three of Cups", "Four of Cups", "Five of Cups",
-  "Six of Cups", "Seven of Cups", "Eight of Cups", "Nine of Cups", "Ten of Cups",
-  "Page of Cups", "Knight of Cups", "Queen of Cups", "King of Cups",
-
-  // Minor Arcana: Swords (14)
-  "Ace of Swords", "Two of Swords", "Three of Swords", "Four of Swords", "Five of Swords",
-  "Six of Swords", "Seven of Swords", "Eight of Swords", "Nine of Swords", "Ten of Swords",
-  "Page of Swords", "Knight of Swords", "Queen of Swords", "King of Swords",
-
-  // Minor Arcana: Pentacles (14)
-  "Ace of Pentacles", "Two of Pentacles", "Three of Pentacles", "Four of Pentacles", "Five of Pentacles",
-  "Six of Pentacles", "Seven of Pentacles", "Eight of Pentacles", "Nine of Pentacles", "Ten of Pentacles",
-  "Page of Pentacles", "Knight of Pentacles", "Queen of Pentacles", "King of Pentacles"
+  // Major Arcana
+  "The Fool","The Magician","The High Priestess","The Empress",
+  "The Emperor","The Hierophant","The Lovers","The Chariot",
+  "Strength","The Hermit","Wheel of Fortune","Justice",
+  "The Hanged Man","Death","Temperance","The Devil",
+  "The Tower","The Star","The Moon","The Sun",
+  "Judgement","The World",
+  // Wands
+  "Ace of Wands","Two of Wands","Three of Wands","Four of Wands","Five of Wands",
+  "Six of Wands","Seven of Wands","Eight of Wands","Nine of Wands","Ten of Wands",
+  "Page of Wands","Knight of Wands","Queen of Wands","King of Wands",
+  // Cups
+  "Ace of Cups","Two of Cups","Three of Cups","Four of Cups","Five of Cups",
+  "Six of Cups","Seven of Cups","Eight of Cups","Nine of Cups","Ten of Cups",
+  "Page of Cups","Knight of Cups","Queen of Cups","King of Cups",
+  // Swords
+  "Ace of Swords","Two of Swords","Three of Swords","Four of Swords","Five of Swords",
+  "Six of Swords","Seven of Swords","Eight of Swords","Nine of Swords","Ten of Swords",
+  "Page of Swords","Knight of Swords","Queen of Swords","King of Swords",
+  // Pentacles
+  "Ace of Pentacles","Two of Pentacles","Three of Pentacles","Four of Pentacles","Five of Pentacles",
+  "Six of Pentacles","Seven of Pentacles","Eight of Pentacles","Nine of Pentacles","Ten of Pentacles",
+  "Page of Pentacles","Knight of Pentacles","Queen of Pentacles","King of Pentacles"
 ];
-
-// Mapping from each card name  its image filename in qtarotimages*.JPG
 
 const tarotImages = {
   // Major Arcana
@@ -119,65 +116,94 @@ const tarotImages = {
   "King of Pentacles":      "minor_arcana_pentacles_king.JPG"
 };
 
-const drawBtn = document.getElementById('drawBtn');
-const settingsBtn = document.getElementById('settingsBtn');
-const modal = document.getElementById('settingsModal');
-const saveSettings = document.getElementById('saveSettings');
-const apiKeyInput = document.getElementById('apiKeyInput');
 
+// ─── Element Hooks ────────────────────────────────────────────────────────────
+
+const drawBtn        = document.getElementById('drawBtn');
+const settingsBtn    = document.getElementById('settingsBtn');
+const settingsModalEl= document.getElementById('settingsModal');
+const saveSettings   = document.getElementById('saveSettings');
+const apiKeyInput    = document.getElementById('apiKeyInput');
+const cardsContainer = document.getElementById('cardsContainer');
+
+// Bootstrap Modal instance
+const bootstrapModal = new bootstrap.Modal(settingsModalEl);
+
+// Load stored key
 let apiKey = localStorage.getItem('qrng_api_key') || '';
 
+// Register service worker
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('/qtarot/service-worker.js', {
     scope: '/qtarot/'
   });
 }
 
+// ─── Settings Handlers ───────────────────────────────────────────────────────
+
+// Show the Bootstrap modal
 settingsBtn.addEventListener('click', () => {
-  modal.classList.remove('hidden');
   apiKeyInput.value = apiKey;
+  bootstrapModal.show();
 });
 
+// Save & hide modal
 saveSettings.addEventListener('click', () => {
-  apiKey = apiKeyInput.value;
+  apiKey = apiKeyInput.value.trim();
   localStorage.setItem('qrng_api_key', apiKey);
-  modal.classList.add('hidden');
+  bootstrapModal.hide();
 });
+
+// ─── Drawing Logic ───────────────────────────────────────────────────────────
 
 drawBtn.addEventListener('click', async () => {
-  const count = parseInt(document.getElementById('cardCount').value, 10);
-  const reversed = document.getElementById('allowReversed').checked;
-  const container = document.getElementById('cardsContainer');
-  container.innerHTML = '';
+  const count       = parseInt(document.getElementById('cardCount').value, 10);
+  const allowRev    = document.getElementById('allowReversed').checked;
+  cardsContainer.innerHTML = '';
 
-  if (!apiKey) return alert('Please set an API key in settings.');
+  if (!apiKey) {
+    return alert('⚠️ Please set your API key in Settings first.');
+  }
 
   try {
-    const response = await fetch(`https://api.quantumnumbers.anu.edu.au/?length=${count}&type=hex16&size=10`, {
-      headers: { 'x-api-key': apiKey }
-    });
-    const json = await response.json();
+    const resp = await fetch(
+      `https://api.quantumnumbers.anu.edu.au/?length=${count}&type=hex16&size=10`,
+      { headers: { 'x-api-key': apiKey } }
+    );
+    const body = await resp.json();
+    if (!body.success) throw new Error(body.message);
 
-    if (!json.success) throw new Error(json.message);
+    // Copy deck so we can splice out drawn cards
+    const deck = tarotCards.slice();
+    const draws = [];
 
-    const cards = [];
     for (let i = 0; i < count; i++) {
-      const index = parseInt(json.data[i].slice(0, 4), 16) % tarotCards.length;
-      let card = tarotCards[index];
-      const isReversed = reversed && Math.random() > 0.5;
-      cards.push({ card, reversed: isReversed });
+      const hex    = body.data[i];
+      const value  = parseInt(hex, 16);
+      const space  = allowRev ? deck.length * 2 : deck.length;
+      let   idx    = value % space;
+      const rev    = allowRev && idx >= deck.length;
+      if (rev) idx -= deck.length;
+      const card   = deck.splice(idx, 1)[0];
+      draws.push({ card, rev });
     }
 
-    cards.forEach(({ card, reversed }) => {
-      const img = tarotImages[card] || '';
-      container.innerHTML += `
-        <div class="text-center">
-          <img src="images/${img}" class="w-32 mx-auto transform ${reversed ? 'rotate-180' : ''}" alt="${card}">
-          <div class="mt-2">${reversed ? 'Reversed ' : ''}${card}</div>
-        </div>
-      `;
+    // Render
+    draws.forEach(({ card, rev }) => {
+      const col = document.createElement('div');
+      col.className = 'col-6 col-md-4 text-center mb-4';
+      const img = document.createElement('img');
+      img.src       = `images/${tarotImages[card]}`;
+      img.alt       = card;
+      img.className = 'img-fluid' + (rev ? ' rotate-180' : '');
+      const cap = document.createElement('p');
+      cap.textContent = (rev ? 'Reversed ' : '') + card;
+      cap.className = 'mt-2';
+      col.append(img, cap);
+      cardsContainer.appendChild(col);
     });
+
   } catch (err) {
-    alert('Error fetching cards: ' + err.message);
+    alert('❌ Error: ' + err.message);
   }
 });
