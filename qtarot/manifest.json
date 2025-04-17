@@ -1,6 +1,6 @@
 {
   "name": "Quantum Tarot",
-  "short_name": "Tarot",
+  "short_name": "QTarot",
   "start_url": "/qtarot/",
   "display": "standalone",
   "background_color": "#111827",
