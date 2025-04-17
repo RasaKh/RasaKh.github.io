@@ -1,0 +1,21 @@
+{
+  "name": "Quantum Tarot",
+  "short_name": "Tarot",
+  "start_url": "/qtarot/",
+  "display": "standalone",
+  "background_color": "#111827",
+  "theme_color": "#4F46E5",
+  "scope": "/qtarot/",
+  "icons": [
+    {
+      "src": "/images/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/images/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
