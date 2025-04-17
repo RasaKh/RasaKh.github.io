@@ -5,6 +5,8 @@ const URLS_TO_CACHE = [
   '/qtarot/index.html',
   '/qtarot/app.js',
   '/qtarot/manifest.json',
+  '/qtarot/css/bootstrap.min.css',
+  '/qtarot/js/bootstrap.bundle.min.js',
   '/qtarot/images/major_arcana_fool.JPG',
   '/qtarot/images/major_arcana_magician.JPG',
   '/qtarot/images/major_arcana_priestess.JPG',
