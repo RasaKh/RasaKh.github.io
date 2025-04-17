@@ -130,6 +130,7 @@ let apiKey = localStorage.getItem('qrng_api_key') || '';
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('/qtarot/service-worker.js', {
     scope: '/qtarot/'
+  });
 }
 
 settingsBtn.addEventListener('click', () => {
