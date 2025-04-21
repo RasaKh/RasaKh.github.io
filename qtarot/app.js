@@ -154,7 +154,9 @@ saveSettings.addEventListener('click', () => {
   bootstrapModal.hide();
 });
 
-// ─── Drawing Logic ───────────────────────────────────────────────────────────
+
+
+// ─── Drawing Logic with Fallback ───────────────────────────────────────────
 
 drawBtn.addEventListener('click', async () => {
   const count       = parseInt(document.getElementById('cardCount').value, 10);
@@ -165,20 +167,13 @@ drawBtn.addEventListener('click', async () => {
     return alert('⚠️ Please set your API key in Settings first.');
   }
 
-  try {
-    const resp = await fetch(
-      `https://api.quantumnumbers.anu.edu.au/?length=${count}&type=hex16&size=10`,
-      { headers: { 'x-api-key': apiKey } }
-    );
-    const body = await resp.json();
-    if (!body.success) throw new Error(body.message);
-
-    // Copy deck so we can splice out drawn cards
+  // Helper to process an array of hex strings into cards
+  function renderFromHexes(hexArray) {
     const deck = tarotCards.slice();
     const draws = [];
 
     for (let i = 0; i < count; i++) {
-      const hex    = body.data[i];
+      const hex    = hexArray[i];
       const value  = parseInt(hex, 16);
       const space  = allowRev ? deck.length * 2 : deck.length;
       let   idx    = value % space;
@@ -188,7 +183,6 @@ drawBtn.addEventListener('click', async () => {
       draws.push({ card, rev });
     }
 
-    // Render
     draws.forEach(({ card, rev }) => {
       const col = document.createElement('div');
       col.className = 'col-6 col-md-4 text-center mb-4';
@@ -202,8 +196,41 @@ drawBtn.addEventListener('click', async () => {
       col.append(img, cap);
       cardsContainer.appendChild(col);
     });
+  }
 
-  } catch (err) {
-    alert('❌ Error: ' + err.message);
+  try {
+    // Primary API
+    const resp = await fetch(
+      `https://api.quantumnumbers.anu.edu.au/?length=${count}&type=hex16&size=10`,
+      { headers: { 'x-api-key': apiKey } }
+    );
+    const body = await resp.json();
+    if (!body.success) throw new Error(body.message);
+
+    renderFromHexes(body.data);
+
+  } catch (originalErr) {
+    // Fallback to secondary API
+    alert(`❌ Error: ${originalErr.message}. Trying secondary source...`);
+    try {
+      // Collect 'count' hex strings from the secondary service, with delays
+      const hexes = [];
+      for (let i = 0; i < count; i++) {
+        // Pause 1.1 seconds between requests
+        await new Promise(resolve => setTimeout(resolve, 1100));
+
+        const resp2 = await fetch(
+          'https://lfdr.de/qrng_api/qrng?length=10&format=HEX'
+        );
+        const body2 = await resp2.json();
+        if (!body2.qrn) throw new Error('Invalid response from secondary source');
+        hexes.push(body2.qrn);
+      }
+      renderFromHexes(hexes);
+
+    } catch (/* secondaryErr */) {
+      // If secondary fails, show original error only
+      alert(`❌ Error: ${originalErr.message}`);
+    }
   }
 });
