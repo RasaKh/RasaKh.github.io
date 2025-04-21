@@ -1,4 +1,4 @@
-const VERSION = 'v0.1.1';
+const VERSION = 'v0.2.1';
 const CACHE_NAME = `quantum-tarot-${VERSION}`;
 const URLS_TO_CACHE = [
   '/qtarot/',
