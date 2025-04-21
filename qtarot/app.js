@@ -228,9 +228,9 @@ drawBtn.addEventListener('click', async () => {
       }
       renderFromHexes(hexes);
 
-    } catch (/* secondaryErr */) {
+    } catch (secondaryErr) {
       // If secondary fails, show original error only
-      alert(`❌ Error: ${originalErr.message}`);
+      alert(`❌ Error: \nAPI1: ${originalErr.message} \nAPI2: ${secondaryErr.message}`);
     }
   }
 });
