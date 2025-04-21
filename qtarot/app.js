@@ -220,7 +220,7 @@ drawBtn.addEventListener('click', async () => {
         await new Promise(resolve => setTimeout(resolve, 1100));
 
         const resp2 = await fetch(
-          'https://lfdr.de/qrng_api/qrng?length=10&format=HEX'
+          'https://winter-tree-f387.rasakhosrofar.workers.dev/'
         );
         const body2 = await resp2.json();
         if (!body2.qrn) throw new Error('Invalid response from secondary source');
