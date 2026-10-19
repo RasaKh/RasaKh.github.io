@@ -1,33 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <style>
-    .video-container {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  width: 100%;
-  height: 100%; 
-  overflow: hidden;
-}
-.video-container video {
-  /* Make video to at least 100% wide and tall */
-  min-width: 100%; 
-  min-height: 100%; 
-
-  /* Setting width & height to auto prevents the browser from stretching or squishing the video */
-  width: auto;
-  height: auto;
-
-  /* Center the video */
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%,-50%);
-}
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rasa Khosrofar, M.D. | Redirecting to khosrofar.me</title>
+<meta name="description" content="Rasa Khosrofar, M.D.: redirecting to khosrofar.me.">
+<link rel="canonical" href="https://khosrofar.me/">
+<meta name="robots" content="noindex, follow">
+<script>
+  window.location.replace("https://khosrofar.me/" + window.location.hash);
+</script>
+<noscript><meta http-equiv="refresh" content="0; url=https://khosrofar.me/"></noscript>
+<style>
+  :root { --navy: #1f3a5c; --navy-deep: #17293f; --brick: #8a3b34; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; min-height: 100vh; display: flex; flex-direction: column;
+    background: #f4f5f6; color: #243347;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    line-height: 1.5;
+  }
+  .masthead { background: var(--navy); border-bottom: 3px solid #1c1e21; padding: .75rem 1rem; }
+  .masthead .in { max-width: 1080px; margin: 0 auto; display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: .25rem 1rem; }
+  .brand { color: #fff; font-size: 1.25rem; font-weight: 500; margin: 0; }
+  .tag { color: #c9d4e0; font-size: .875rem; }
+  main { flex: 1; display: flex; align-items: center; justify-content: center; padding: 2rem 1rem; }
+  .card { width: 100%; max-width: 520px; background: #fff; border: 1px solid #c7cbd1; }
+  .card-head { background: #eef1f5; border-bottom: 1px solid #c7cbd1; padding: .6rem 1rem; font-weight: 600; color: var(--navy-deep); }
+  .card-body { padding: 1.25rem 1rem 1.4rem; }
+  .card-body p { margin: 0; }
+  a { color: var(--navy); text-underline-offset: .15em; }
+  a:hover { color: var(--brick); }
+  a:focus-visible { outline: 3px solid #457ca8; outline-offset: 2px; }
+</style>
 </head>
+<body>
+<header class="masthead">
+  <div class="in">
+    <h1 class="brand">Rasa Khosrofar, M.D.</h1>
+    <span class="tag">Medical doctor | researcher | builder of things</span>
+  </div>
+</header>
 
-<div class="video-container">
-  <video controls autoplay>
-    <source src="derinden-agustosbocegi.mp4" type="video/mp4">
-   </video
-</div>
+<main>
+  <section class="card">
+    <div class="card-head">Redirecting</div>
+    <div class="card-body">
+      <p>Taking you to <a href="https://khosrofar.me/">khosrofar.me</a>.</p>
+    </div>
+  </section>
+</main>
+</body>
+</html>
